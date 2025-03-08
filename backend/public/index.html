@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat with Sienna Carter | Fitness & Lifestyle Content Creator</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="description" content="Chat with Sienna Carter, a fitness enthusiast and content creator who can help with lifestyle advice and generate unique AI images.">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="header-content">
+        <div class="logo">
+          <img src="img/sienna-avatar.jpg" alt="Sienna Carter Logo" class="logo-image">
+          <div class="logo-text">
+            <h1>Sienna Carter</h1>
+            <p>Fitness Enthusiast & Content Creator</p>
+          </div>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="#" class="active">Chat</a></li>
+            <li><a href="#" id="image-tab">Generate Images</a></li>
+            <li><a href="#" id="about-tab">About Sienna</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Chat Section -->
+      <section id="chat-section" class="section-content active">
+        <div class="chat-container">
+          <div class="chat-messages" id="chat-messages">
+            <div class="message assistant">
+              <div class="message-avatar">
+                <img src="img/sienna-avatar.jpg" alt="Sienna Carter" onerror="this.src='img/default-avatar.jpg'">
+              </div>
+              <div class="message-content">
+                <p>Hey there! I'm Sienna Carter. So excited to chat with you! Whether you want to talk fitness, lifestyle, or see some custom images I can create for you, I'm here for it all! How can I make your day better? 💪🏼✨</p>
+              </div>
+            </div>
+            <!-- Messages will be added here dynamically -->
+          </div>
+          
+          <form id="chat-form" class="chat-input-form">
+            <input type="text" id="chat-input" placeholder="Message Sienna..." autocomplete="off">
+            <button type="submit">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Image Generation Section -->
+      <section id="image-generation-section" class="section-content">
+        <div class="image-generation-container">
+          <h2>Generate Custom Images</h2>
+          <p class="section-description">Describe what you'd like me to create for you, and I'll generate a unique image that matches your vision.</p>
+          
+          <form id="image-form">
+            <textarea id="image-prompt" placeholder="Describe the image you want me to create..." rows="4"></textarea>
+            <button type="submit" id="generate-button">Generate Image</button>
+          </form>
+          
+          <div class="image-result" id="image-result">
+            <!-- Generated image will appear here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about-section" class="section-content">
+        <div class="about-container">
+          <div class="about-header">
+            <img src="img/sienna-profile.jpg" alt="Sienna Carter Profile" class="profile-image" onerror="this.src='img/default-profile.jpg'">
+            <div class="about-intro">
+              <h2>Meet Sienna Carter</h2>
+              <p class="tagline">Fitness Enthusiast & Content Creator based in Los Angeles</p>
+            </div>
+          </div>
+          
+          <div class="about-content">
+            <p>Hey there! I'm Sienna, a 26-year-old fitness enthusiast and content creator based in Los Angeles. I'm passionate about sharing my fitness journey, lifestyle content, and connecting with my fans.</p>
+            
+            <p>After building a strong following on social media, I've been creating premium content for my subscribers that blends my love for fitness, fashion, and photography.</p>
+            
+            <p>When I'm not at the gym or creating content, I enjoy beach workouts, trying new healthy recipes, and planning my next travel adventure!</p>
+            
+            <p>I created this space to connect with fans, answer questions, and help bring your visual ideas to life. I love hearing from you!</p>
+            
+            <p>Let's chat! 💪🏼✨</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Sienna Carter | This is a demonstration of a custom GPT character</p>
+    </footer>
+  </div>
+
+  <div class="loading-indicator" id="loading">
+    <div class="spinner"></div>
+    <p>Processing...</p>
+  </div>
+
+  <script>
+    // Global API base URL - dinamik olarak ayarlanır
+    const API_BASE_URL = window.location.protocol + '//' + window.location.host;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      // DOM Elements
+      const chatForm = document.getElementById('chat-form');
+      const chatInput = document.getElementById('chat-input');
+      const chatMessages = document.getElementById('chat-messages');
+      const imageForm = document.getElementById('image-form');
+      const imagePrompt = document.getElementById('image-prompt');
+      const imageResult = document.getElementById('image-result');
+      const loadingIndicator = document.getElementById('loading');
+      
+      // Navigation Elements
+      const chatTab = document.querySelector('nav ul li a');
+      const imageTab = document.getElementById('image-tab');
+      const aboutTab = document.getElementById('about-tab');
+      
+      // Content Sections
+      const chatSection = document.getElementById('chat-section');
+      const imageGenerationSection = document.getElementById('image-generation-section');
+      const aboutSection = document.getElementById('about-section');
+      
+      // Conversation History
+      let conversationHistory = [];
+      
+      // User Avatar
+      const userAvatar = 'img/user-avatar.png';
+      const siennaAvatar = 'img/sienna-avatar.jpg';
+      
+      // Event Listeners for Navigation
+      chatTab.addEventListener('click', (e) => {
+        e.preventDefault();
+        activateTab(chatTab);
+        activateSection(chatSection);
+      });
+      
+      imageTab.addEventListener('click', (e) => {
+        e.preventDefault();
+        activateTab(imageTab);
+        activateSection(imageGenerationSection);
+      });
+      
+      aboutTab.addEventListener('click', (e) => {
+        e.preventDefault();
+        activateTab(aboutTab);
+        activateSection(aboutSection);
+      });
+      
+      // Chat Form Submission
+      chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const message = chatInput.value.trim();
+        if (!message) return;
+        
+        // Add user message to chat
+        addMessageToChat('user', message);
+        chatInput.value = '';
+        
+        // Show loading indicator
+        loadingIndicator.classList.add('active');
+        
+        try {
+          // Add message to conversation history
+          conversationHistory.push({ role: 'user', content: message });
+          
+          // Get response from API
+          const response = await fetchSiennaResponse(message, conversationHistory);
+          
+          // Add Sienna's response to chat
+          addMessageToChat('assistant', response.message);
+          
+          // Update conversation history
+          conversationHistory = response.conversationHistory;
+          
+        } catch (error) {
+          console.error('Error fetching response:', error);
+          addMessageToChat('assistant', "Sorry, I'm having some technical difficulties right now. Could you try again in a moment?");
+        } finally {
+          // Hide loading indicator
+          loadingIndicator.classList.remove('active');
+          
+          // Scroll to bottom of chat
+          scrollToBottom();
+        }
+      });
+      
+      // Image Form Submission
+      imageForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const prompt = imagePrompt.value.trim();
+        if (!prompt) return;
+        
+        // Show loading indicator
+        loadingIndicator.classList.add('active');
+        
+        try {
+          // Get generated image from API
+          const result = await generateImage(prompt);
+          
+          // Display the result
+          displayGeneratedImage(result.imageUrl, result.enhancedPrompt);
+          
+          // Clear input
+          imagePrompt.value = '';
+          
+        } catch (error) {
+          console.error('Error generating image:', error);
+          imageResult.innerHTML = `
+            <div class="error-message">
+              <p>Sorry, I couldn't generate that image. Please try a different description.</p>
+            </div>
+          `;
+        } finally {
+          // Hide loading indicator
+          loadingIndicator.classList.remove('active');
+        }
+      });
+      
+      // Functions
+      function activateTab(tab) {
+        // Remove active class from all tabs
+        document.querySelectorAll('nav ul li a').forEach(link => {
+          link.classList.remove('active');
+        });
+        
+        // Add active class to clicked tab
+        tab.classList.add('active');
+      }
+      
+      function activateSection(section) {
+        // Hide all sections
+        document.querySelectorAll('.section-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        
+        // Show selected section
+        section.classList.add('active');
+      }
+      
+      function addMessageToChat(role, content) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', role);
+        
+        // Add additional class for easier identification in localStorage saving
+        if (role === 'user') {
+          messageElement.classList.add('user-message');
+        } else if (role === 'assistant') {
+          messageElement.classList.add('sienna-message');
+        }
+        
+        const avatar = role === 'user' ? userAvatar : siennaAvatar;
+        
+        messageElement.innerHTML = `
+          <div class="message-avatar">
+            <img src="${avatar}" alt="${role}" onerror="this.src='img/default-avatar.jpg'">
+          </div>
+          <div class="message-content">
+            <p>${formatMessageContent(content)}</p>
+          </div>
+        `;
+        
+        chatMessages.appendChild(messageElement);
+        scrollToBottom();
+        
+        // Save messages to localStorage after adding a new one
+        saveMessages();
+      }
+      
+      function formatMessageContent(content) {
+        // Convert URLs to links
+        content = content.replace(
+          /(https?:\/\/[^\s]+)/g, 
+          '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+        );
+        
+        // Convert line breaks to <br>
+        content = content.replace(/\n/g, '<br>');
+        
+        return content;
+      }
+      
+      function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+      
+      function displayGeneratedImage(imageUrl, enhancedPrompt) {
+        imageResult.innerHTML = `
+          <div class="generated-image-container">
+            <img src="${imageUrl}" alt="Generated image">
+          </div>
+          <div class="prompt-description">
+            <p><strong>Enhanced prompt:</strong> ${enhancedPrompt}</p>
+          </div>
+        `;
+      }
+      
+      // API Calls
+      async function fetchSiennaResponse(message, history) {
+        const response = await fetch(`${API_BASE_URL}/api/sienna/chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message, conversationHistory: history })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status}`);
+        }
+        
+        return await response.json();
+      }
+      
+      async function generateImage(prompt) {
+        const response = await fetch(`${API_BASE_URL}/api/sienna/generate-image`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status}`);
+        }
+        
+        return await response.json();
+      }
+      
+      // Create placeholder avatar directory and files
+      function createPlaceholderImage() {
+        // This would typically be done server-side or with actual images
+        // For this demo, we'll rely on the onerror fallback to default images
+      }
+      
+      // Initialize
+      createPlaceholderImage();
+
+      // Load saved messages from localStorage
+      function loadSavedMessages() {
+        const savedMessages = localStorage.getItem('siennaMessages');
+        if (savedMessages) {
+          try {
+            const messages = JSON.parse(savedMessages);
+            messages.forEach(msg => {
+              if (msg.type === 'user') {
+                appendUserMessage(msg.content);
+              } else if (msg.type === 'sienna') {
+                appendSiennaMessage(msg.content);
+              }
+            });
+          } catch (e) {
+            console.error("Error loading saved messages:", e);
+          }
+        }
+      }
+      
+      // Save messages to localStorage
+      function saveMessages() {
+        const chatBox = document.getElementById('chat-messages');
+        const messageElements = chatBox.querySelectorAll('.message');
+        
+        const messages = Array.from(messageElements).map(el => {
+          if (el.classList.contains('user-message')) {
+            return {
+              type: 'user',
+              content: el.querySelector('p').textContent
+            };
+          } else if (el.classList.contains('sienna-message')) {
+            return {
+              type: 'sienna',
+              content: el.querySelector('p').textContent
+            };
+          }
+          return null;
+        }).filter(msg => msg !== null);
+        
+        localStorage.setItem('siennaMessages', JSON.stringify(messages));
+      }
+      
+      // Append messages with save functionality
+      function appendUserMessage(message) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', 'user', 'user-message');
+        
+        messageElement.innerHTML = `
+          <div class="message-avatar">
+            <img src="${userAvatar}" alt="user" onerror="this.src='img/default-avatar.jpg'">
+          </div>
+          <div class="message-content">
+            <p>${formatMessageContent(message)}</p>
+          </div>
+        `;
+        
+        chatMessages.appendChild(messageElement);
+        scrollToBottom();
+      }
+      
+      function appendSiennaMessage(message) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', 'assistant', 'sienna-message');
+        
+        messageElement.innerHTML = `
+          <div class="message-avatar">
+            <img src="${siennaAvatar}" alt="Sienna" onerror="this.src='img/default-avatar.jpg'">
+          </div>
+          <div class="message-content">
+            <p>${formatMessageContent(message)}</p>
+          </div>
+        `;
+        
+        chatMessages.appendChild(messageElement);
+        scrollToBottom();
+      }
+      
+      // Load saved messages on page load
+      loadSavedMessages();
+    });
+  </script>
+</body>
+</html> 

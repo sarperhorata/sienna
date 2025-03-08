@@ -1,0 +1,25 @@
+{
+  "name": "sienna-carter",
+  "version": "1.0.0",
+  "description": "AI character platform featuring Sienna Carter",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd backend && npm run dev",
+    "start:frontend": "cd frontend && npm start",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "auth:google": "cd backend && npm run auth:google",
+    "auth:google-manual": "cd backend && npm run auth:google-manual"
+  },
+  "keywords": [
+    "ai",
+    "chatbot",
+    "image-generation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 
