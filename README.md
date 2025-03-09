@@ -1,6 +1,6 @@
-# Sienna Carter - Custom GPT Character
+# Sienna - Custom GPT Character
 
-A custom GPT character implementation for Sienna Carter, a photographer and digital creator with a distinctive voice and style. This project provides a local implementation of Sienna's character for interacting with users and generating AI images.
+A custom GPT character implementation for Sienna, a photographer and digital creator with a distinctive voice and style. This project provides a local implementation of Sienna's character for interacting with users and generating AI images.
 
 ## Features
 
